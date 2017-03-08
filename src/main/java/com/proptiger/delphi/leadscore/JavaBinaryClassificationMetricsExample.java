@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.proptiger.oracle;
+package com.proptiger.delphi.leadscore;
 
 // $example on$
 // $example off$

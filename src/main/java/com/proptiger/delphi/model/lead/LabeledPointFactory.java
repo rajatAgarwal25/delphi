@@ -1,4 +1,4 @@
-package com.proptiger.oracle.model.lead;
+package com.proptiger.delphi.model.lead;
 
 import java.util.HashMap;
 

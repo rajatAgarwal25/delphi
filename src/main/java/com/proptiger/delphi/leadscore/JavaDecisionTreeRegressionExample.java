@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.proptiger.oracle;
+package com.proptiger.delphi.leadscore;
 
 // $example on$
 import java.io.File;
@@ -34,9 +34,10 @@ import org.apache.spark.mllib.tree.model.DecisionTreeModel;
 import org.apache.spark.mllib.util.MLUtils;
 // $example off$
 
+
 import scala.Tuple2;
 
-import com.proptiger.oracle.model.lead.LabeledPointFactory;
+import com.proptiger.delphi.model.lead.LabeledPointFactory;
 
 class JavaDecisionTreeRegressionExample {
 

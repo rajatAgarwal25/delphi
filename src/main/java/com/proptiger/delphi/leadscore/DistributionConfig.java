@@ -1,4 +1,4 @@
-package com.proptiger.oracle;
+package com.proptiger.delphi.leadscore;
 
 import java.util.Arrays;
 import java.util.List;

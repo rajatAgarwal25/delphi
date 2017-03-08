@@ -1,4 +1,4 @@
-package com.proptiger.oracle;
+package com.proptiger.delphi.leadscore;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,11 +10,11 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.sql.SparkSession;
 
-import com.proptiger.oracle.dao.LeadDataService;
-import com.proptiger.oracle.dao.Pair;
-import com.proptiger.oracle.model.lead.LeadData;
-import com.proptiger.oracle.model.lead.LeadDataSerializer;
-import com.proptiger.oracle.model.lead.LeadScore;
+import com.proptiger.delphi.dao.LeadDataService;
+import com.proptiger.delphi.dao.Pair;
+import com.proptiger.delphi.model.lead.LeadData;
+import com.proptiger.delphi.model.lead.LeadDataSerializer;
+import com.proptiger.delphi.model.lead.LeadScore;
 
 @SuppressWarnings("serial")
 public class LeadTrainer implements Serializable {

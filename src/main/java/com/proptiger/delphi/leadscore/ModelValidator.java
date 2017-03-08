@@ -1,10 +1,10 @@
-package com.proptiger.oracle;
+package com.proptiger.delphi.leadscore;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.proptiger.oracle.model.lead.LeadScore;
+import com.proptiger.delphi.model.lead.LeadScore;
 
 public class ModelValidator {
 

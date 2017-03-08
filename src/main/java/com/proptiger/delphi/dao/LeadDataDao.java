@@ -1,4 +1,4 @@
-package com.proptiger.oracle.dao;
+package com.proptiger.delphi.dao;
 
 import java.util.List;
 import java.util.Properties;
@@ -6,8 +6,8 @@ import java.util.Properties;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
-import com.proptiger.oracle.DBConnectionConfig;
-import com.proptiger.oracle.LeadTrainer;
+import com.proptiger.delphi.leadscore.DBConnectionConfig;
+import com.proptiger.delphi.leadscore.LeadTrainer;
 
 public class LeadDataDao {
 

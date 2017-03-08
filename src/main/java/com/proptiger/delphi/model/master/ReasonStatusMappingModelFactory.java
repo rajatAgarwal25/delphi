@@ -1,4 +1,4 @@
-package com.proptiger.oracle.model.master;
+package com.proptiger.delphi.model.master;
 
 import org.apache.spark.sql.Row;
 

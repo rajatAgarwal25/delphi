@@ -1,4 +1,4 @@
-package com.proptiger.oracle;
+package com.proptiger.delphi.leadscore;
 
 import com.proptiger.utils.PropertyUtil;
 

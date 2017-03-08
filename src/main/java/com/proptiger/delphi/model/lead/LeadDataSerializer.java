@@ -1,4 +1,4 @@
-package com.proptiger.oracle.model.lead;
+package com.proptiger.delphi.model.lead;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,10 +15,10 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
-import com.proptiger.oracle.DBConnectionConfig;
-import com.proptiger.oracle.model.master.ReasonStatusMappingContainer;
-import com.proptiger.oracle.model.master.ReasonStatusMappingModel;
-import com.proptiger.oracle.model.master.ReasonStatusMappingSerializer;
+import com.proptiger.delphi.leadscore.DBConnectionConfig;
+import com.proptiger.delphi.model.master.ReasonStatusMappingContainer;
+import com.proptiger.delphi.model.master.ReasonStatusMappingModel;
+import com.proptiger.delphi.model.master.ReasonStatusMappingSerializer;
 import com.proptiger.utils.PropertyUtil;
 
 public class LeadDataSerializer {

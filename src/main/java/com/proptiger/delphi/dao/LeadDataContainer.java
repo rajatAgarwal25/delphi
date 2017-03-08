@@ -1,4 +1,4 @@
-package com.proptiger.oracle.dao;
+package com.proptiger.delphi.dao;
 
 import org.apache.spark.mllib.regression.LabeledPoint;
 

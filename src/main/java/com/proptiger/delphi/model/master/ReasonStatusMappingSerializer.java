@@ -1,4 +1,4 @@
-package com.proptiger.oracle.model.master;
+package com.proptiger.delphi.model.master;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,7 +12,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
-import com.proptiger.oracle.DBConnectionConfig;
+import com.proptiger.delphi.leadscore.DBConnectionConfig;
 import com.proptiger.utils.PropertyUtil;
 
 public class ReasonStatusMappingSerializer {

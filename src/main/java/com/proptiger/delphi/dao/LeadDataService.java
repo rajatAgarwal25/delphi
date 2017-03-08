@@ -1,4 +1,4 @@
-package com.proptiger.oracle.dao;
+package com.proptiger.delphi.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,10 +7,10 @@ import java.util.Map;
 
 import org.apache.spark.mllib.regression.LabeledPoint;
 
-import com.proptiger.oracle.model.lead.LabeledPointFactory;
-import com.proptiger.oracle.model.lead.LeadData;
-import com.proptiger.oracle.model.lead.LeadDataContainer;
-import com.proptiger.oracle.model.lead.LeadDataSerializer;
+import com.proptiger.delphi.model.lead.LabeledPointFactory;
+import com.proptiger.delphi.model.lead.LeadData;
+import com.proptiger.delphi.model.lead.LeadDataContainer;
+import com.proptiger.delphi.model.lead.LeadDataSerializer;
 
 public class LeadDataService {
 

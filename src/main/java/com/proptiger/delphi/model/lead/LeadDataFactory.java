@@ -1,4 +1,4 @@
-package com.proptiger.oracle.model.lead;
+package com.proptiger.delphi.model.lead;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -6,8 +6,8 @@ import java.util.Set;
 
 import org.apache.spark.sql.Row;
 
-import com.proptiger.oracle.model.master.ReasonHelper;
-import com.proptiger.oracle.model.master.ReasonStatusMappingModel;
+import com.proptiger.delphi.model.master.ReasonHelper;
+import com.proptiger.delphi.model.master.ReasonStatusMappingModel;
 
 public class LeadDataFactory {
 
