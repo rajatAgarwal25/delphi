@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.proptiger.delphi.leadscore;
+package com.proptiger.delphi.service.ml.impl;
 
 // $example on$
 import java.io.File;

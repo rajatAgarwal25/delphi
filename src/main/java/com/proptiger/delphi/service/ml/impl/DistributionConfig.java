@@ -1,4 +1,4 @@
-package com.proptiger.delphi.leadscore;
+package com.proptiger.delphi.service.ml.impl;
 
 import java.util.Arrays;
 import java.util.List;

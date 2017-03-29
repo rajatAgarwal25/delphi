@@ -1,6 +1,5 @@
-package com.proptiger.delphi.leadscore;
+package com.proptiger.delphi.service.ml.impl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,31 +8,32 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.sql.SparkSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.proptiger.delphi.dao.LeadDataService;
-import com.proptiger.delphi.dao.Pair;
 import com.proptiger.delphi.model.lead.LeadData;
-import com.proptiger.delphi.model.lead.LeadDataSerializer;
 import com.proptiger.delphi.model.lead.LeadScore;
+import com.proptiger.delphi.service.LeadService;
+import com.proptiger.delphi.service.ModelTrainService;
+import com.proptiger.delphi.service.impl.Pair;
 
-@SuppressWarnings("serial")
-public class LeadTrainer implements Serializable {
+@Service
+public class ModelTrainServiceImpl implements ModelTrainService {
 
-    public static final SparkSession sparkSession = SparkSession.builder().master("local").appName("Spark2Train")
-                                                          .getOrCreate();
+    @Autowired
+    private SparkSession sparkSession;
 
-    private static final boolean     loadLeadData = false;
+    @Autowired
+    private LeadService  leadService;
 
-    public static void main(String[] args) {
-        if (loadLeadData) {
-            LeadDataSerializer.main(null);
-        }
+    @Override
+    public void trainModel() {
 
         JavaSparkContext jsc = new JavaSparkContext(sparkSession.sparkContext());
         try {
 
             System.out.println("Loading data..");
-            Pair<Map<LabeledPoint, Integer>, List<LeadData>> pair = LeadDataService.getInstance().getLeads();
+            Pair<Map<LabeledPoint, Integer>, List<LeadData>> pair = leadService.getLeads();
             Map<LabeledPoint, Integer> leadsMap = pair.getFirst();
 
             JavaRDD<LabeledPoint> data = jsc.parallelize(new ArrayList<>(leadsMap.keySet()));
@@ -47,7 +47,7 @@ public class LeadTrainer implements Serializable {
             ModelValidator.printStats(createLeadScores(pair.getSecond(), leadIdScoreMap));
         }
         finally {
-            jsc.close();
+            // jsc.close();
         }
     }
 

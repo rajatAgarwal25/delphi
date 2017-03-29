@@ -1,4 +1,4 @@
-package com.proptiger.delphi.dao;
+package com.proptiger.delphi.service.impl;
 
 import java.io.Serializable;
 

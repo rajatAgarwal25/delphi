@@ -1,4 +1,4 @@
-package com.proptiger.delphi.leadscore;
+package com.proptiger.delphi.config;
 
 import com.proptiger.utils.PropertyUtil;
 

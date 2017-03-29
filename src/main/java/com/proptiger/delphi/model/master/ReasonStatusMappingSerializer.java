@@ -12,7 +12,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
-import com.proptiger.delphi.leadscore.DBConnectionConfig;
+import com.proptiger.delphi.config.DBConnectionConfig;
 import com.proptiger.utils.PropertyUtil;
 
 public class ReasonStatusMappingSerializer {
