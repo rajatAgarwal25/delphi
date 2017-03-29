@@ -15,7 +15,7 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.WriteConcern;
 
 @Configuration
-public class MongoConfiguration extends AbstractMongoConfiguration {
+public class MongoConfig extends AbstractMongoConfiguration {
 
     @Value("${mongo.db.uri}")
     private String  uri;

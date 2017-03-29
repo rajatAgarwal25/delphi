@@ -22,13 +22,16 @@ import com.proptiger.delphi.service.impl.Pair;
 @Service
 public class ModelTrainServiceImpl implements ModelTrainService {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(ModelTrainServiceImpl.class);
+    private static Logger          LOGGER = LoggerFactory.getLogger(ModelTrainServiceImpl.class);
 
     @Autowired
-    private SparkSession sparkSession;
+    private SparkSession           sparkSession;
 
     @Autowired
-    private LeadService  leadService;
+    private LeadService            leadService;
+
+    @Autowired
+    private DecisionTreeRegression decisionTreeRegression;
 
     @Override
     public void trainModel() {
@@ -43,7 +46,7 @@ public class ModelTrainServiceImpl implements ModelTrainService {
             JavaRDD<LabeledPoint> data = jsc.parallelize(new ArrayList<>(leadsMap.keySet()));
 
             LOGGER.debug("Training data..");
-            Map<Integer, Double> leadIdScoreMap = JavaDecisionTreeRegressionExample.trainModel(
+            Map<Integer, Double> leadIdScoreMap = decisionTreeRegression.trainModel(
                     JavaSparkContext.toSparkContext(jsc),
                     data,
                     leadsMap);
