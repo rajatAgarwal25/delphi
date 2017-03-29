@@ -6,7 +6,7 @@ import com.proptiger.delphi.model.lead.LeadDataContainer;
 
 public interface SerializedLeadInfoService {
 
-    String post(LeadDataContainer leadDataContainer);
+    String serialize(LeadDataContainer leadDataContainer);
 
     LeadDataContainer get(Query query);
 

@@ -1,4 +1,4 @@
-package com.proptiger.delphi;
+package com.proptiger.delphi.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import com.proptiger.delphi.service.ModelTrainService;
 @RequestMapping(value = "/trainedModels/")
 public class TrainedModelController {
 
-    private static Logger     logger = LoggerFactory.getLogger(TrainedModelController.class);
+    private static Logger     LOGGER = LoggerFactory.getLogger(TrainedModelController.class);
 
     @Autowired
     private ModelTrainService modelTrainService;
@@ -23,6 +23,7 @@ public class TrainedModelController {
     // TODO change to post
     @ResponseBody
     public String trainModel() {
+        LOGGER.debug("Starting training");
         modelTrainService.trainModel();
         return "hello-world";
     }

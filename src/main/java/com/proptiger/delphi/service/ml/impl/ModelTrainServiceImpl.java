@@ -8,6 +8,8 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.sql.SparkSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ import com.proptiger.delphi.service.impl.Pair;
 
 @Service
 public class ModelTrainServiceImpl implements ModelTrainService {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(ModelTrainServiceImpl.class);
 
     @Autowired
     private SparkSession sparkSession;
@@ -32,18 +36,18 @@ public class ModelTrainServiceImpl implements ModelTrainService {
         JavaSparkContext jsc = new JavaSparkContext(sparkSession.sparkContext());
         try {
 
-            System.out.println("Loading data..");
+            LOGGER.debug("Loading data..");
             Pair<Map<LabeledPoint, Integer>, List<LeadData>> pair = leadService.getLeads();
             Map<LabeledPoint, Integer> leadsMap = pair.getFirst();
 
             JavaRDD<LabeledPoint> data = jsc.parallelize(new ArrayList<>(leadsMap.keySet()));
 
-            System.out.println("Training data..");
+            LOGGER.debug("Training data..");
             Map<Integer, Double> leadIdScoreMap = JavaDecisionTreeRegressionExample.trainModel(
                     JavaSparkContext.toSparkContext(jsc),
                     data,
                     leadsMap);
-            System.out.println("Testing models");
+            LOGGER.debug("Testing models");
             ModelValidator.printStats(createLeadScores(pair.getSecond(), leadIdScoreMap));
         }
         finally {

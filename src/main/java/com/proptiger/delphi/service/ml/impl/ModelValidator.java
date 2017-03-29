@@ -4,9 +4,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.proptiger.delphi.model.lead.LeadScore;
 
 public class ModelValidator {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(ModelValidator.class);
 
     public static void printStats(List<LeadScore> scores) {
         Collections.sort(scores);
@@ -22,33 +27,33 @@ public class ModelValidator {
      * @param distributionConfig
      */
     private static void printStats(List<LeadScore> scores, DistributionConfig distributionConfig) {
-        System.out.println("Count of scores being validated is " + scores.size());
+        LOGGER.debug("Count of scores being validated is " + scores.size());
         int totalClosedWon = getClosedWonLeads(scores).size();
         int totalClosedLost = getClosedLostLeads(scores).size();
         int init = 0;
         int index = 0;
-        System.out.println("Getting data for config " + distributionConfig);
-        System.out.println("Total closed won " + totalClosedWon);
+        LOGGER.debug("Getting data for config " + distributionConfig);
+        LOGGER.debug("Total closed won " + totalClosedWon);
         for (Integer partition : distributionConfig.getConfigs()) {
             int itemsCount = (partition * scores.size()) / 100;
             int partitionClosedWon = getClosedWonLeads(scores.subList(init, init + itemsCount)).size();
             int partitionClosedLost = getClosedLostLeads(scores.subList(init, init + itemsCount)).size();
             init += itemsCount;
-            System.out.println(index + " Closed won from partition is "
+            LOGGER.debug(index + " Closed won from partition is "
                     + partitionClosedWon
                     + " , while partition size is "
                     + itemsCount);
             if (totalClosedWon != 0) {
-                System.out.println("For " + index
+                LOGGER.debug("For " + index
 
                 + " partition, closed won ratio is " + (partitionClosedWon * 100) / totalClosedWon);
             }
-            // System.out.println(index + " Closed lost from partition is "
+            // LOGGER.debug(index + " Closed lost from partition is "
             // + partitionClosedLost
             // + " , while partition size is "
             // + itemsCount);
             // if (totalClosedWon != 0) {
-            // System.out.println("For " + index
+            // LOGGER.debug("For " + index
             //
             // + " partition, closed lost ratio is " + (partitionClosedLost *
             // 100) / totalClosedLost);

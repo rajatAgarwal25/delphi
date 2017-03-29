@@ -1,4 +1,4 @@
-package com.proptiger.delphi;
+package com.proptiger.delphi.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,18 +11,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.proptiger.delphi.service.LeadService;
 
 @Controller
-@RequestMapping(value = "/leadDataContainers/")
+@RequestMapping(value = "/")
 public class LeadDataContainerController {
 
-    private static Logger                logger = LoggerFactory.getLogger(LeadDataContainerController.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(LeadDataContainerController.class);
 
     @Autowired
-    private LeadService                  leadService;
+    private LeadService   leadService;
 
-    @RequestMapping(value = "test", method = RequestMethod.GET)
+    @RequestMapping(value = "leadDataContainers", method = RequestMethod.GET)
     // TODO change to post
     @ResponseBody
     public String persistLeadDataController() {
+        LOGGER.debug("Starting serialization");
         leadService.fetchLeadsAndSerialize(11967177);
         return "hello-world";
     }

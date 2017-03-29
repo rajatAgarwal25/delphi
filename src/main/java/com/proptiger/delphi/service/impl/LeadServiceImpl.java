@@ -10,6 +10,8 @@ import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ import com.proptiger.delphi.service.SerializedLeadInfoService;
 
 @Service
 public class LeadServiceImpl implements LeadService {
+
+    private static Logger             LOGGER              = LoggerFactory.getLogger(LeadServiceImpl.class);
 
     private static final Integer      LEADS_MAX_PAGE_SIZE = 10;
     private static final Integer      LEADS_TO_FETCH      = LEADS_MAX_PAGE_SIZE * 2;
@@ -60,7 +64,7 @@ public class LeadServiceImpl implements LeadService {
 
     private void processLeadData(LeadDataContainer leadDataContainer) {
         List<LeadData> presalesVerifiedLead = new ArrayList<>();
-        System.out.println("Total leads deserialized = " + leadDataContainer.getLeadData().size());
+        LOGGER.debug("Total leads deserialized {} ", leadDataContainer.getLeadData().size());
         for (LeadData l : leadDataContainer.getLeadData()) {
             if (l != null && Boolean.TRUE.equals(l.getIsPresalesVerified())
                     && !Integer.valueOf(3).equals(l.getSaleTypeId())) {
@@ -68,7 +72,7 @@ public class LeadServiceImpl implements LeadService {
             }
         }
         leadDataContainer.setLeadData(presalesVerifiedLead);
-        System.out.println("Training on leads count = " + presalesVerifiedLead.size());
+        LOGGER.debug("Training on leads count = {}", presalesVerifiedLead.size());
     }
 
     private static Map<Integer, ReasonStatusMappingModel> getReasonStatusMappingModelMap() {
@@ -92,10 +96,10 @@ public class LeadServiceImpl implements LeadService {
         int minLeadId = leadIdToStart - LEADS_MAX_PAGE_SIZE;
         int countLeadsFetched = 0;
         while (countLeadsFetched < LEADS_TO_FETCH) {
-            System.out.println(minLeadId + " - " + maxLeadId + " - " + LEADS_MAX_PAGE_SIZE);
+            LOGGER.debug(minLeadId + " - " + maxLeadId + " - " + LEADS_MAX_PAGE_SIZE);
             String dbQuery = getQuery(minLeadId, maxLeadId);
-            System.out.println("Query is " + dbQuery);
-            System.out.println("Current size = " + countLeadsFetched);
+            LOGGER.debug("Query is " + dbQuery);
+            LOGGER.debug("Current size = " + countLeadsFetched);
             Dataset<Row> jdbcDF = sparkSession.read().jdbc(
                     DBConnectionConfig.getInstance().getUrl(),
                     dbQuery,
@@ -111,8 +115,8 @@ public class LeadServiceImpl implements LeadService {
             tc.setStartLeadId(minLeadId);
             tc.setEndLeadId(maxLeadId);
             countLeadsFetched += tc.getLeadData().size();
-            System.out.println("Writing " + tc.getLeadData().size() + " models. MAX_LEADID is " + maxLeadId);
-            serializedLeadInfoService.post(tc);
+            LOGGER.debug("Writing " + tc.getLeadData().size() + " models. MAX_LEADID is " + maxLeadId);
+            serializedLeadInfoService.serialize(tc);
         }
     }
 

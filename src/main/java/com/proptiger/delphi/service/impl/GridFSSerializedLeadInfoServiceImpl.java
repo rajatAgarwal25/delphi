@@ -11,6 +11,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.query.Query;
@@ -27,22 +29,24 @@ import com.proptiger.delphi.service.SerializedLeadInfoService;
 @Service
 public class GridFSSerializedLeadInfoServiceImpl implements SerializedLeadInfoService {
 
+    private static Logger       LOGGER = LoggerFactory.getLogger(GridFSSerializedLeadInfoServiceImpl.class);
+
     @Autowired
     private GridFsTemplate      gridFSTemplate;
 
     @Value("${leads.model.serializedPath}")
     public String               LEADDATA_SERIALIZED_FOLDER;
 
-    private static final String COUNT = "count";
+    private static final String COUNT  = "count";
 
     @Override
-    public String post(LeadDataContainer leadDataContainer) {
+    public String serialize(LeadDataContainer leadDataContainer) {
         if (leadDataContainer == null || leadDataContainer.getLeadData() == null
                 || leadDataContainer.getLeadData().size() == 0) {
-            System.out.println("No leads to serialize.");
+            LOGGER.debug("No leads to serialize.");
             return null;
         }
-        System.out.println("Saving " + leadDataContainer.getLeadData().size() + " leads.");
+        LOGGER.debug("Saving {} leads.", leadDataContainer.getLeadData().size());
         try {
             File file = new File(LEADDATA_SERIALIZED_FOLDER + ".ser");
             file.createNewFile();
@@ -59,7 +63,7 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializedLeadInfoSe
             return gridFSTemplate.store(inputStream, file.getName(), "application/octet-stream").getId().toString();
         }
         catch (Exception e) {
-            System.err.println("Exception while saving file in mongo" + e.getMessage());
+            LOGGER.error("Exception while saving file in mongo", e);
 
         }
         return null;
@@ -85,7 +89,7 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializedLeadInfoSe
                 baos.close();
             }
             catch (Exception e) {
-                System.err.println("Exception while deserializing gridfs file" + e.getMessage());
+                LOGGER.error("Exception while deserializing gridfs file", e);
             }
         }
 
