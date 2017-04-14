@@ -25,7 +25,7 @@ import com.proptiger.delphi.model.master.ReasonStatusMappingContainer;
 import com.proptiger.delphi.model.master.ReasonStatusMappingModel;
 import com.proptiger.delphi.model.master.ReasonStatusMappingSerializer;
 import com.proptiger.delphi.service.LeadService;
-import com.proptiger.delphi.service.SerializedLeadInfoService;
+import com.proptiger.delphi.service.SerializationService;
 
 @Service
 public class LeadServiceImpl implements LeadService {
@@ -39,7 +39,7 @@ public class LeadServiceImpl implements LeadService {
     private SparkSession              sparkSession;
 
     @Autowired
-    private SerializedLeadInfoService serializedLeadInfoService;
+    private SerializationService serializedLeadInfoService;
 
     @Async
     @Override
@@ -49,7 +49,7 @@ public class LeadServiceImpl implements LeadService {
 
     public Pair<Map<LabeledPoint, Integer>, List<LeadData>> getLeads() {
         Pair<Map<LabeledPoint, Integer>, List<LeadData>> pair = new Pair<>();
-        LeadDataContainer leadDataContainer = serializedLeadInfoService.get(null);
+        LeadDataContainer leadDataContainer = serializedLeadInfoService.getLeadDataContainer(null);
         processLeadData(leadDataContainer);
 
         Map<LabeledPoint, Integer> map = new HashMap<LabeledPoint, Integer>();

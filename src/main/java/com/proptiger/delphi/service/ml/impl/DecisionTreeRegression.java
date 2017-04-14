@@ -11,14 +11,19 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.DecisionTree;
 import org.apache.spark.mllib.tree.model.DecisionTreeModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import scala.Tuple2;
 
 import com.proptiger.delphi.model.lead.LabeledPointFactory;
+import com.proptiger.delphi.service.SerializationService;
 
 @Component
 public class DecisionTreeRegression implements Regression {
+
+    @Autowired
+    private SerializationService serializationService;
 
     private static final String  impurity = "variance";
     private static final Integer maxDepth = 7;
@@ -64,11 +69,7 @@ public class DecisionTreeRegression implements Regression {
         System.out.println("Size of lead score map on test data is " + leadIdScoreMap.size());
 
         // Save and load model
-        // File f = new File(MODEL_FNAME);
-        // if (f.exists()) {
-        // deleteDir(f);
-        // }
-        // model.save(jsc, MODEL_FNAME);
+        serializationService.serialize(model);
 
         return leadIdScoreMap;
     }

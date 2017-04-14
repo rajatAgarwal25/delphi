@@ -7,20 +7,24 @@ import java.util.Map;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.regression.LabeledPoint;
+import org.apache.spark.mllib.tree.model.DecisionTreeModel;
 import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.proptiger.delphi.dto.LeadScoreDTO;
+import com.proptiger.delphi.model.lead.LabeledPointFactory;
 import com.proptiger.delphi.model.lead.LeadData;
 import com.proptiger.delphi.model.lead.LeadScore;
 import com.proptiger.delphi.service.LeadService;
-import com.proptiger.delphi.service.ModelTrainService;
+import com.proptiger.delphi.service.ModelService;
+import com.proptiger.delphi.service.SerializationService;
 import com.proptiger.delphi.service.impl.Pair;
 
 @Service
-public class ModelTrainServiceImpl implements ModelTrainService {
+public class ModelTrainServiceImpl implements ModelService {
 
     private static Logger          LOGGER = LoggerFactory.getLogger(ModelTrainServiceImpl.class);
 
@@ -32,6 +36,9 @@ public class ModelTrainServiceImpl implements ModelTrainService {
 
     @Autowired
     private DecisionTreeRegression decisionTreeRegression;
+
+    @Autowired
+    private SerializationService   serializationService;
 
     @Override
     public void trainModel() {
@@ -73,6 +80,15 @@ public class ModelTrainServiceImpl implements ModelTrainService {
 
         // System.out.println(leadScores);
         return leadScores;
+    }
+
+    @Override
+    public LeadScoreDTO getLeadScore(LeadData leadData) {
+        DecisionTreeModel model = serializationService.getModel(null);
+        double predict = model.predict(LabeledPointFactory.newInstance(leadData).features());
+        LeadScoreDTO leadScoreDTO = new LeadScoreDTO();
+        leadScoreDTO.setScore(predict);
+        return leadScoreDTO;
     }
 
 }

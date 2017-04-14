@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.proptiger.delphi.service.ModelTrainService;
+import com.proptiger.delphi.service.ModelService;
 
 @Controller
 @RequestMapping(value = "/trainedModels/")
@@ -17,7 +17,7 @@ public class TrainedModelController {
     private static Logger     LOGGER = LoggerFactory.getLogger(TrainedModelController.class);
 
     @Autowired
-    private ModelTrainService modelTrainService;
+    private ModelService modelTrainService;
 
     @RequestMapping(value = "test", method = RequestMethod.GET)
     // TODO change to post
