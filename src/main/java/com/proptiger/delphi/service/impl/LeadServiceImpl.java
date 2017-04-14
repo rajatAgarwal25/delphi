@@ -23,23 +23,26 @@ import com.proptiger.delphi.model.lead.LeadDataContainer;
 import com.proptiger.delphi.model.lead.LeadDataFactory;
 import com.proptiger.delphi.model.master.ReasonStatusMappingContainer;
 import com.proptiger.delphi.model.master.ReasonStatusMappingModel;
-import com.proptiger.delphi.model.master.ReasonStatusMappingSerializer;
+import com.proptiger.delphi.model.master.ReasonStatusMappingService;
 import com.proptiger.delphi.service.LeadService;
 import com.proptiger.delphi.service.SerializationService;
 
 @Service
 public class LeadServiceImpl implements LeadService {
 
-    private static Logger             LOGGER              = LoggerFactory.getLogger(LeadServiceImpl.class);
+    private static Logger              LOGGER              = LoggerFactory.getLogger(LeadServiceImpl.class);
 
-    private static final Integer      LEADS_MAX_PAGE_SIZE = 10;
-    private static final Integer      LEADS_TO_FETCH      = LEADS_MAX_PAGE_SIZE * 2;
-
-    @Autowired
-    private SparkSession              sparkSession;
+    private static final Integer       LEADS_MAX_PAGE_SIZE = 10;
+    private static final Integer       LEADS_TO_FETCH      = LEADS_MAX_PAGE_SIZE * 2;
 
     @Autowired
-    private SerializationService serializedLeadInfoService;
+    private SparkSession               sparkSession;
+
+    @Autowired
+    private SerializationService       serializedLeadInfoService;
+
+    @Autowired
+    private ReasonStatusMappingService reasonStatusMappingService;
 
     @Async
     @Override
@@ -75,9 +78,9 @@ public class LeadServiceImpl implements LeadService {
         LOGGER.debug("Training on leads count = {}", presalesVerifiedLead.size());
     }
 
-    private static Map<Integer, ReasonStatusMappingModel> getReasonStatusMappingModelMap() {
+    private Map<Integer, ReasonStatusMappingModel> getReasonStatusMappingModelMap() {
         Map<Integer, ReasonStatusMappingModel> map = new HashMap<>();
-        ReasonStatusMappingContainer container = ReasonStatusMappingSerializer.getReasonStatusMappingContainer();
+        ReasonStatusMappingContainer container = reasonStatusMappingService.getReasonStatusMappingContainer();
         container.getModelList().forEach(model -> {
             map.put(model.getId(), model);
         });
