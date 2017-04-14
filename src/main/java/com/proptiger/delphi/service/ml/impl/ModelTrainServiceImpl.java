@@ -32,6 +32,9 @@ public class ModelTrainServiceImpl implements ModelService {
     private SparkSession           sparkSession;
 
     @Autowired
+    private JavaSparkContext       jsc;
+
+    @Autowired
     private LeadService            leadService;
 
     @Autowired
@@ -42,10 +45,7 @@ public class ModelTrainServiceImpl implements ModelService {
 
     @Override
     public void trainModel() {
-
-        JavaSparkContext jsc = new JavaSparkContext(sparkSession.sparkContext());
         try {
-
             LOGGER.debug("Loading data..");
             Pair<Map<LabeledPoint, Integer>, List<LeadData>> pair = leadService.getLeads();
             Map<LabeledPoint, Integer> leadsMap = pair.getFirst();
@@ -54,14 +54,13 @@ public class ModelTrainServiceImpl implements ModelService {
 
             LOGGER.debug("Training data..");
             Map<Integer, Double> leadIdScoreMap = decisionTreeRegression.trainModel(
-                    JavaSparkContext.toSparkContext(jsc),
+                    sparkSession.sparkContext(),
                     data,
                     leadsMap);
             LOGGER.debug("Testing models");
             ModelValidator.printStats(createLeadScores(pair.getSecond(), leadIdScoreMap));
         }
         finally {
-            // jsc.close();
         }
     }
 

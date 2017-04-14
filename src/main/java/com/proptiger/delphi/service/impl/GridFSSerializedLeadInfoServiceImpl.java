@@ -11,8 +11,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.spark.SparkContext;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.tree.model.DecisionTreeModel;
 import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
@@ -40,9 +38,6 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializationService
 
     @Autowired
     private SparkSession        sparkSession;
-
-    @Autowired
-    private SparkContext        sparkContext;
 
     @Value("${leads.model.serializedPath}")
     public String               LEADDATA_SERIALIZED_FOLDER;
@@ -119,9 +114,7 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializationService
             String currentTime = String.valueOf(System.currentTimeMillis());
             String path = MODELS_SERIALIZED_FOLDER + currentTime + ".ser";
             File file = new File(path);
-            // XXX Bug
-            JavaSparkContext jsc = new JavaSparkContext(sparkSession.sparkContext());
-            decisionTreeModel.save(jsc.sc(), path);
+            decisionTreeModel.save(sparkSession.sparkContext(), path);
 
             DBObject metaData = new BasicDBObject();
             metaData.put(TIME_STAMP, currentTime);
@@ -149,7 +142,7 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializationService
             file.writeTo(faos);
             faos.close();
 
-            return DecisionTreeModel.load(sparkContext, path);
+            return DecisionTreeModel.load(sparkSession.sparkContext(), path);
         }
         catch (Exception e) {
             e.printStackTrace();
