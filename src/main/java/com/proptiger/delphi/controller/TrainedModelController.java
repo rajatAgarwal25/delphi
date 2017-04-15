@@ -1,5 +1,8 @@
 package com.proptiger.delphi.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,23 +11,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.proptiger.delphi.dto.APIResponse;
 import com.proptiger.delphi.service.ModelService;
 
 @Controller
-@RequestMapping(value = "/trainedModels/")
+@RequestMapping(value = "/")
+@Api(value = "TrainedModelController")
 public class TrainedModelController {
 
-    private static Logger     LOGGER = LoggerFactory.getLogger(TrainedModelController.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(TrainedModelController.class);
 
     @Autowired
-    private ModelService modelTrainService;
+    private ModelService  modelTrainService;
 
-    @RequestMapping(value = "test", method = RequestMethod.GET)
-    // TODO change to post
+    @ApiOperation(
+            value = "API endpoint to start training of ml models",
+            notes = "API endpoint to start training of ml models")
+    @RequestMapping(value = "train", method = RequestMethod.POST)
     @ResponseBody
-    public String trainModel() {
+    public APIResponse trainModel() {
         LOGGER.debug("Starting training");
         modelTrainService.trainModel();
-        return "hello-world";
+        return new APIResponse();
     }
 }
