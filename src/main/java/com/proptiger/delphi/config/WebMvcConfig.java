@@ -15,7 +15,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @EnableWebMvc
 @EnableAsync
 @Configuration
-@PropertySource({ "classpath:application.properties" })
+@PropertySource({ "classpath:application.properties", "classpath:config.properties" })
 @EnableMongoRepositories(basePackages = "com.proptiger.delphi")
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 

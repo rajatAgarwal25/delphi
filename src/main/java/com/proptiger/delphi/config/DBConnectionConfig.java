@@ -1,39 +1,38 @@
 package com.proptiger.delphi.config;
 
-import com.proptiger.utils.PropertyUtil;
+import java.util.Properties;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
 public class DBConnectionConfig {
 
-    private static final String       URL_KEY      = "mysql.connection.url";
-    private static final String       USER_KEY     = "mysql.connection.user";
-    private static final String       PASSWORD_KEY = "mysql.connection.password";
+    @Value("${mysql.connection.url}")
+    private String url;
 
-    private String                    url;
-    private String                    userName;
-    private String                    password;
+    @Value("${mysql.connection.user}")
+    private String userName;
 
-    private static DBConnectionConfig _instance    = new DBConnectionConfig();
+    @Value("${mysql.connection.password}")
+    private String password;
+    private String driver = "com.mysql.jdbc.Driver";
 
-    private DBConnectionConfig() {
-        this.url = PropertyUtil.getPropertyValue(URL_KEY);
-        this.userName = PropertyUtil.getPropertyValue(USER_KEY);
-        this.password = PropertyUtil.getPropertyValue(PASSWORD_KEY);
-    }
+    public Properties getConnectionProperties() {
+        Properties connectionProperties = new Properties();
+        connectionProperties.put("user", userName);
+        connectionProperties.put("password", password);
+        connectionProperties.put("driver", "com.mysql.jdbc.Driver");
 
-    public static DBConnectionConfig getInstance() {
-        return _instance;
+        return connectionProperties;
     }
 
     public String getUrl() {
         return url;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getPassword() {
-        return password;
+    public String getDriver() {
+        return driver;
     }
 
     @Override

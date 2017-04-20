@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.sql.Dataset;
@@ -44,6 +43,9 @@ public class LeadServiceImpl implements LeadService {
     @Autowired
     private ReasonStatusMappingService reasonStatusMappingService;
 
+    @Autowired
+    private DBConnectionConfig         dbConnectionConfig;
+
     @Async
     @Override
     public void fetchLeadsAndSerialize(int maxLeadId) {
@@ -67,7 +69,7 @@ public class LeadServiceImpl implements LeadService {
 
     private void processLeadData(LeadDataContainer leadDataContainer) {
         List<LeadData> presalesVerifiedLead = new ArrayList<>();
-        LOGGER.debug("Total leads deserialized {} ", leadDataContainer.getLeadData().size());
+        System.out.println("Total leads deserialized = " + leadDataContainer.getLeadData().size());
         for (LeadData l : leadDataContainer.getLeadData()) {
             if (l != null && Boolean.TRUE.equals(l.getIsPresalesVerified())
                     && !Integer.valueOf(3).equals(l.getSaleTypeId())) {
@@ -75,7 +77,7 @@ public class LeadServiceImpl implements LeadService {
             }
         }
         leadDataContainer.setLeadData(presalesVerifiedLead);
-        LOGGER.debug("Training on leads count = {}", presalesVerifiedLead.size());
+        System.out.println("Training on leads count = " + presalesVerifiedLead.size());
     }
 
     private Map<Integer, ReasonStatusMappingModel> getReasonStatusMappingModelMap() {
@@ -88,25 +90,20 @@ public class LeadServiceImpl implements LeadService {
     }
 
     private void loadLeadsData(int leadIdToStart) {
-        Properties connectionProperties = new Properties();
-        connectionProperties.put("user", DBConnectionConfig.getInstance().getUserName());
-        connectionProperties.put("password", DBConnectionConfig.getInstance().getPassword());
-        connectionProperties.put("driver", "com.mysql.jdbc.Driver");
-
         Map<Integer, ReasonStatusMappingModel> rsmMap = getReasonStatusMappingModelMap();
 
         int maxLeadId = leadIdToStart;
         int minLeadId = leadIdToStart - LEADS_MAX_PAGE_SIZE;
         int countLeadsFetched = 0;
         while (countLeadsFetched < LEADS_TO_FETCH) {
-            LOGGER.debug(minLeadId + " - " + maxLeadId + " - " + LEADS_MAX_PAGE_SIZE);
+            System.out.println(minLeadId + " - " + maxLeadId + " - " + LEADS_MAX_PAGE_SIZE);
             String dbQuery = getQuery(minLeadId, maxLeadId);
-            LOGGER.debug("Query is " + dbQuery);
-            LOGGER.debug("Current size = " + countLeadsFetched);
+            System.out.println("Query is " + dbQuery);
+            System.out.println("Current size = " + countLeadsFetched);
             Dataset<Row> jdbcDF = sparkSession.read().jdbc(
-                    DBConnectionConfig.getInstance().getUrl(),
+                    dbConnectionConfig.getUrl(),
                     dbQuery,
-                    connectionProperties);
+                    dbConnectionConfig.getConnectionProperties());
             List<Row> modelRows = jdbcDF.collectAsList();
             LeadDataContainer tc = new LeadDataContainer();
             modelRows.forEach(row -> {
@@ -118,7 +115,7 @@ public class LeadServiceImpl implements LeadService {
             tc.setStartLeadId(minLeadId);
             tc.setEndLeadId(maxLeadId);
             countLeadsFetched += tc.getLeadData().size();
-            LOGGER.debug("Writing " + tc.getLeadData().size() + " models. MAX_LEADID is " + maxLeadId);
+            System.out.println("Writing " + tc.getLeadData().size() + " models. MAX_LEADID is " + maxLeadId);
             serializedLeadInfoService.serialize(tc);
         }
     }
