@@ -31,8 +31,8 @@ public class LeadServiceImpl implements LeadService {
 
     private static Logger              LOGGER              = LoggerFactory.getLogger(LeadServiceImpl.class);
 
-    private static final Integer       LEADS_MAX_PAGE_SIZE = 10;
-    private static final Integer       LEADS_TO_FETCH      = LEADS_MAX_PAGE_SIZE * 2;
+    private static final Integer       LEADS_MAX_PAGE_SIZE = 10000;
+    private static final Integer       LEADS_TO_FETCH      = LEADS_MAX_PAGE_SIZE * 10;
 
     @Autowired
     private SparkSession               sparkSession;

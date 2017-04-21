@@ -27,33 +27,32 @@ public class ModelValidator {
      * @param distributionConfig
      */
     private static void printStats(List<LeadScore> scores, DistributionConfig distributionConfig) {
-        LOGGER.debug("Count of scores being validated is " + scores.size());
+        System.out.println("Count of scores being validated is " + scores.size());
         int totalClosedWon = getClosedWonLeads(scores).size();
         int totalClosedLost = getClosedLostLeads(scores).size();
         int init = 0;
         int index = 0;
-        LOGGER.debug("Getting data for config " + distributionConfig);
-        LOGGER.debug("Total closed won " + totalClosedWon);
+        System.out.println("Getting data for config " + distributionConfig);
+        System.out.println("Total closed won " + totalClosedWon);
         for (Integer partition : distributionConfig.getConfigs()) {
             int itemsCount = (partition * scores.size()) / 100;
             int partitionClosedWon = getClosedWonLeads(scores.subList(init, init + itemsCount)).size();
-            int partitionClosedLost = getClosedLostLeads(scores.subList(init, init + itemsCount)).size();
             init += itemsCount;
-            LOGGER.debug(index + " Closed won from partition is "
+            System.out.println(index + " Closed won from partition is "
                     + partitionClosedWon
                     + " , while partition size is "
                     + itemsCount);
             if (totalClosedWon != 0) {
-                LOGGER.debug("For " + index
+                System.out.println("For " + index
 
                 + " partition, closed won ratio is " + (partitionClosedWon * 100) / totalClosedWon);
             }
-            // LOGGER.debug(index + " Closed lost from partition is "
+            // System.out.println(index + " Closed lost from partition is "
             // + partitionClosedLost
             // + " , while partition size is "
             // + itemsCount);
             // if (totalClosedWon != 0) {
-            // LOGGER.debug("For " + index
+            // System.out.println("For " + index
             //
             // + " partition, closed lost ratio is " + (partitionClosedLost *
             // 100) / totalClosedLost);
@@ -64,6 +63,9 @@ public class ModelValidator {
     }
 
     private static List<LeadScore> getClosedWonLeads(List<LeadScore> scores) {
+        System.out.println("Score ranges from " + scores.get(0).getScore()
+                + " to "
+                + scores.get(scores.size() - 1).getScore());
         return scores.stream().filter(l -> l.getLeadData().getClosed()).collect(Collectors.toList());
     }
 

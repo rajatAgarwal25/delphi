@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.proptiger.delphi.dto.LeadConvertiblityClass;
 import com.proptiger.delphi.dto.LeadScoreDTO;
 import com.proptiger.delphi.model.lead.LabeledPointFactory;
 import com.proptiger.delphi.model.lead.LeadData;
@@ -26,7 +27,7 @@ import com.proptiger.delphi.service.impl.Pair;
 @Service
 public class ModelTrainServiceImpl implements ModelService {
 
-    private static Logger          LOGGER = LoggerFactory.getLogger(ModelTrainServiceImpl.class);
+    private static Logger          LOGGER       = LoggerFactory.getLogger(ModelTrainServiceImpl.class);
 
     @Autowired
     private SparkSession           sparkSession;
@@ -42,6 +43,9 @@ public class ModelTrainServiceImpl implements ModelService {
 
     @Autowired
     private SerializationService   serializationService;
+
+    private static final double    HIGH_SCORE   = 0.013333333333333334;
+    private static final double    MEDIUM_SCORE = 5.514705882352942E-4;
 
     @Override
     public void trainModel() {
@@ -87,6 +91,13 @@ public class ModelTrainServiceImpl implements ModelService {
         double predict = model.predict(LabeledPointFactory.newInstance(leadData).features());
         LeadScoreDTO leadScoreDTO = new LeadScoreDTO();
         leadScoreDTO.setScore(predict);
+        leadScoreDTO.setLeadConvertiblityClass(LeadConvertiblityClass.LOW);
+        if (predict > HIGH_SCORE) {
+            leadScoreDTO.setLeadConvertiblityClass(LeadConvertiblityClass.HIGH);
+        }
+        else if (predict > MEDIUM_SCORE) {
+            leadScoreDTO.setLeadConvertiblityClass(LeadConvertiblityClass.MEDIUM);
+        }
         return leadScoreDTO;
     }
 

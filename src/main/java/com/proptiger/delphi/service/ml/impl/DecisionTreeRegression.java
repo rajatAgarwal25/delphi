@@ -1,5 +1,6 @@
 package com.proptiger.delphi.service.ml.impl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,14 +21,14 @@ import com.proptiger.delphi.model.lead.LabeledPointFactory;
 import com.proptiger.delphi.service.SerializationService;
 
 @Component
-public class DecisionTreeRegression implements Regression {
+public class DecisionTreeRegression implements Regression, Serializable {
 
     @Autowired
-    private SerializationService serializationService;
+    private transient SerializationService serializationService;
 
-    private static final String  impurity = "variance";
-    private static final Integer maxDepth = 7;
-    private static final Integer maxBins  = 32;
+    private static final String            impurity = "variance";
+    private static final Integer           maxDepth = 7;
+    private static final Integer           maxBins  = 32;
 
     /**
      * Returns
