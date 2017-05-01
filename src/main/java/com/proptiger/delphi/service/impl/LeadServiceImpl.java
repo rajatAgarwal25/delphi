@@ -12,6 +12,7 @@ import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +30,13 @@ import com.proptiger.delphi.service.SerializationService;
 @Service
 public class LeadServiceImpl implements LeadService {
 
-    private static Logger              LOGGER              = LoggerFactory.getLogger(LeadServiceImpl.class);
+    private static Logger              LOGGER = LoggerFactory.getLogger(LeadServiceImpl.class);
 
-    private static final Integer       LEADS_MAX_PAGE_SIZE = 10000;
-    private static final Integer       LEADS_TO_FETCH      = LEADS_MAX_PAGE_SIZE * 10;
+    @Value("${lead.max.page.size}")
+    private Integer                    LEADS_MAX_PAGE_SIZE;
+
+    @Value("${lead.to.fetch}")
+    private Integer                    LEADS_TO_FETCH;
 
     @Autowired
     private SparkSession               sparkSession;
@@ -120,7 +124,7 @@ public class LeadServiceImpl implements LeadService {
         }
     }
 
-    private static final String getQuery(Integer minLeadId, Integer maxLeadId) {
+    private final String getQuery(Integer minLeadId, Integer maxLeadId) {
         final String dbTable = "(select L.id, L.client_type_id, L.country_id, L.city_id, L.sale_type_id, " + "L.time_frame_id, group_concat(MS.star) as star, group_concat(E.id) as enquiryIds, group_concat(E.upload_type_id) as upload_types, "
                 + "min(PR.min_budget) , max(PR.max_budget) as max_budget, group_concat(PR.bedroom) as bedrooms, group_concat(PR.project_id), "
                 + "LA.status_id, group_concat(LAH.reason_status_mapping_id) as rsmIds, group_concat(ER.project_id) as enquiry_projects from leads L "

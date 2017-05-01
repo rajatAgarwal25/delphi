@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,17 +56,18 @@ public class LeadScoreController {
         return new APIResponse(leadScore);
     }
 
-    @ApiOperation(
-            value = "Computes lead score for given lead information",
-            notes = "Computes lead score for given lead information")
-    @RequestMapping(value = "leadScoreTest", method = RequestMethod.POST)
-    @ResponseBody
-    public APIResponse getLeadScoreTest(@ApiParam(
-            value = "Details of lead for which score has to be calculated",
-            required = true) @RequestBody LeadData leadData) {
-        LOGGER.debug("Computing lead score for " + leadData);
-        LeadScoreDTO leadScore = modelService.getLeadScore(leadData);
-        LOGGER.debug("Lead score for " + leadData + " is " + leadScore);
-        return new APIResponse(leadScore);
-    }
+    // XXX Post method to help in json creation for request
+    // @ApiOperation(
+    // value = "Computes lead score for given lead information",
+    // notes = "Computes lead score for given lead information")
+    // @RequestMapping(value = "leadScoreTest", method = RequestMethod.POST)
+    // @ResponseBody
+    // public APIResponse getLeadScoreTest(@ApiParam(
+    // value = "Details of lead for which score has to be calculated",
+    // required = true) @RequestBody LeadData leadData) {
+    // LOGGER.debug("Computing lead score for " + leadData);
+    // LeadScoreDTO leadScore = modelService.getLeadScore(leadData);
+    // LOGGER.debug("Lead score for " + leadData + " is " + leadScore);
+    // return new APIResponse(leadScore);
+    // }
 }

@@ -41,19 +41,12 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializationService
     @Autowired
     private SparkSession        sparkSession;
 
-    @Autowired
-    private ZipUtil             zipUtil;
-
     @Value("${leads.model.serializedPath}")
     public String               LEADDATA_SERIALIZED_FOLDER;
 
     @Value("${ml.model.serializedPath}")
     public String               MODELS_SERIALIZED_FOLDER;
 
-    @Value("${ml.de.model.deserializedPath}")
-    public String               MODELS_DE_SERIALIZED_FOLDER;
-
-    private static final String OUTPUT              = "output";
     private static final String COUNT               = "count";
     private static final String TIME_STAMP          = "time_stamp";
 
@@ -96,7 +89,7 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializationService
     @Override
     public LeadDataContainer getLeadDataContainer(Query query) {
         if (query == null) {
-            // query = getStarQueryForType(SERIALIZED_TYPE.LEADS);
+            query = getStarQueryForType(SERIALIZED_TYPE.LEADS);
         }
         List<GridFSDBFile> files = gridFSTemplate.find(query);
 
