@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,8 @@ import com.proptiger.delphi.service.SerializationService;
 @Service
 public class GridFSSerializedLeadInfoServiceImpl implements SerializationService {
 
-    private static Logger       LOGGER     = LoggerFactory.getLogger(GridFSSerializedLeadInfoServiceImpl.class);
+    private static Logger       LOGGER              = LoggerFactory
+                                                            .getLogger(GridFSSerializedLeadInfoServiceImpl.class);
 
     @Autowired
     private GridFsTemplate      gridFSTemplate;
@@ -48,9 +50,14 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializationService
     @Value("${ml.model.serializedPath}")
     public String               MODELS_SERIALIZED_FOLDER;
 
-    private static final String OUTPUT     = "output";
-    private static final String COUNT      = "count";
-    private static final String TIME_STAMP = "time_stamp";
+    @Value("${ml.de.model.deserializedPath}")
+    public String               MODELS_DE_SERIALIZED_FOLDER;
+
+    private static final String OUTPUT              = "output";
+    private static final String COUNT               = "count";
+    private static final String TIME_STAMP          = "time_stamp";
+
+    private static final String SERIALIZED_TYPE_STR = "SERIALIZED_TYPE";
     private DecisionTreeModel   decisionTreeModel;
 
     @Override
@@ -72,10 +79,11 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializationService
 
             DBObject metaData = new BasicDBObject();
             metaData.put(COUNT, leadDataContainer.getLeadData().size());
-            metaData.put(SERIALIZED_TYPE.class.getCanonicalName(), SERIALIZED_TYPE.LEADS);
+            metaData.put(SERIALIZED_TYPE_STR, SERIALIZED_TYPE.LEADS.name());
 
             InputStream inputStream = new FileInputStream(file);
-            return gridFSTemplate.store(inputStream, file.getName(), "application/octet-stream").getId().toString();
+            return gridFSTemplate.store(inputStream, file.getName(), "application/octet-stream", metaData).getId()
+                    .toString();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -88,7 +96,7 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializationService
     @Override
     public LeadDataContainer getLeadDataContainer(Query query) {
         if (query == null) {
-            query = getStarQueryForType(SERIALIZED_TYPE.LEADS);
+            // query = getStarQueryForType(SERIALIZED_TYPE.LEADS);
         }
         List<GridFSDBFile> files = gridFSTemplate.find(query);
 
@@ -123,18 +131,22 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializationService
     public String serialize(DecisionTreeModel decisionTreeModel) {
         try {
             String currentTime = String.valueOf(System.currentTimeMillis());
-            String path = MODELS_SERIALIZED_FOLDER;
-            deleteDir(new File(path));
-            File file = new File(path);
 
-            decisionTreeModel.save(sparkSession.sparkContext(), path);
+            File file = new File(MODELS_SERIALIZED_FOLDER + File.pathSeparator + currentTime + ".ser");
+            file.createNewFile();
+            FileOutputStream fileOut = new FileOutputStream(file);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(decisionTreeModel);
+            out.close();
+            fileOut.close();
 
             DBObject metaData = new BasicDBObject();
             metaData.put(TIME_STAMP, currentTime);
+            metaData.put(SERIALIZED_TYPE_STR, SERIALIZED_TYPE.MODELS.name());
 
-            String zipppedFile = zipUtil.zip(path);
-            InputStream inputStream = new FileInputStream(zipppedFile);
-            return gridFSTemplate.store(inputStream, file.getName(), "application/octet-stream").getId().toString();
+            InputStream inputStream = new FileInputStream(file.getAbsolutePath());
+            return gridFSTemplate.store(inputStream, file.getName(), "application/octet-stream", metaData).getId()
+                    .toString();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -152,18 +164,29 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializationService
             if (query == null) {
                 query = getStarQueryForType(SERIALIZED_TYPE.MODELS);
             }
-            GridFSDBFile file = gridFSTemplate.findOne(query);
+            List<GridFSDBFile> files = gridFSTemplate.find(query);
+            for (GridFSDBFile file : files) {
+                try {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    file.writeTo(baos);
 
-            String path = MODELS_SERIALIZED_FOLDER + File.pathSeparator + System.currentTimeMillis() + ".zip";
-            File f = new File(path);
+                    ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                    ObjectInputStream in = new ObjectInputStream(bais);
+                    DecisionTreeModel decisionTreeModel = (DecisionTreeModel) in.readObject();
+                    in.close();
+                    bais.close();
+                    baos.close();
 
-            FileOutputStream faos = new FileOutputStream(f);
-            file.writeTo(faos);
-            faos.close();
+                    if (decisionTreeModel != null) {
+                        return decisionTreeModel;
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
-            zipUtil.unzip(f, MODELS_SERIALIZED_FOLDER);
-
-            return DecisionTreeModel.load(sparkSession.sparkContext(), MODELS_SERIALIZED_FOLDER);
+            return decisionTreeModel;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -171,20 +194,8 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializationService
         return null;
     }
 
-    private void deleteDir(File file) {
-        File[] contents = file.listFiles();
-        if (contents != null) {
-            for (File f : contents) {
-                deleteDir(f);
-            }
-        }
-        file.delete();
-    }
-
     private Query getStarQueryForType(SERIALIZED_TYPE type) {
-        return null;
-        // return new Query(Criteria.where("metadata." +
-        // SERIALIZED_TYPE.class.getCanonicalName()).is(type));
+        return new Query(Criteria.where("metadata." + SERIALIZED_TYPE_STR).is(type));
     }
 }
 

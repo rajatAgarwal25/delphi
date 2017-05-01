@@ -45,16 +45,16 @@ public class LabeledPointFactory {
     }
 
     private static double getY(LeadData leadData) {
-        if (leadData.getClosed()) {
+        if (Boolean.TRUE.equals(leadData.getClosed())) {
             return 1;
         }
-        else if (leadData.getStatusId() == 8) {
+        else if (leadData.getStatusId() != null && leadData.getStatusId() == 8) {
             return -0.05;
         }
         // else if (leadData.getSvDone() && leadData.getMeetingDone()) {
         // return 0.2;
         // }
-        else if (leadData.getSvDone()) {
+        else if (Boolean.TRUE.equals(leadData.getSvDone())) {
             return 0.05;
         }
         // else if (leadData.getMeetingDone()) {
