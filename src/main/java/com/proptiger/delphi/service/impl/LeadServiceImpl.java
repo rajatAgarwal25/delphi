@@ -100,6 +100,9 @@ public class LeadServiceImpl implements LeadService {
         int minLeadId = leadIdToStart - LEADS_MAX_PAGE_SIZE;
         int countLeadsFetched = 0;
         while (countLeadsFetched < LEADS_TO_FETCH) {
+            if (maxLeadId <= 0) {
+                break;
+            }
             System.out.println(minLeadId + " - " + maxLeadId + " - " + LEADS_MAX_PAGE_SIZE);
             String dbQuery = getQuery(minLeadId, maxLeadId);
             System.out.println("Query is " + dbQuery);
