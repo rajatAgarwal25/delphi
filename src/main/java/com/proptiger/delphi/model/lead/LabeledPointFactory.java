@@ -18,7 +18,7 @@ public class LabeledPointFactory {
                 leadData.getCountryId() == 1 ? 0 : 1,
                 Boolean.TRUE.equals(leadData.getConfCallVerified()) ? 0 : 1,
                 Math.sqrt(leadData.getBudget()),
-                leadData.getAdditionalEnquiryCount(),
+                // leadData.getAdditionalEnquiryCount(),
                 Math.sqrt(leadData.getBedrooms()),
                 leadData.getEnquiryLevelProjectCount(),
                 leadData.getNumCallAtPresales(),

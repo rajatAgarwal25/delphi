@@ -66,7 +66,20 @@ public class ModelValidator {
         System.out.println("Score ranges from " + scores.get(0).getScore()
                 + " to "
                 + scores.get(scores.size() - 1).getScore());
-        return scores.stream().filter(l -> l.getLeadData().getClosed()).collect(Collectors.toList());
+        List<LeadScore> closedWonScores = scores.stream().filter(l -> l.getLeadData().getClosed())
+                .collect(Collectors.toList());
+        // for (LeadScore cs : closedWonScores) {
+        // try {
+        // System.out.println("Score is " + cs.getScore());
+        // System.out.println(new
+        // ObjectMapper().writeValueAsString(cs.getLeadData()));
+        // }
+        // catch (JsonProcessingException e) {
+        // System.out.println("Exception occured while converting to json.");
+        // }
+        // }
+
+        return closedWonScores;
     }
 
     private static List<LeadScore> getClosedLostLeads(List<LeadScore> scores) {

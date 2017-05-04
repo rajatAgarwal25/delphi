@@ -171,6 +171,7 @@ public class GridFSSerializedLeadInfoServiceImpl implements SerializationService
                     baos.close();
 
                     if (decisionTreeModel != null) {
+                        this.decisionTreeModel = decisionTreeModel;
                         return decisionTreeModel;
                     }
                 }

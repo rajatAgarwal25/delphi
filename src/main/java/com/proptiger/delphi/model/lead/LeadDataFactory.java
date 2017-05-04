@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.apache.spark.sql.Row;
 
+import scala.actors.threadpool.Arrays;
+
 import com.proptiger.delphi.model.master.ReasonHelper;
 import com.proptiger.delphi.model.master.ReasonStatusMappingModel;
 
@@ -26,9 +28,6 @@ public class LeadDataFactory {
 
         Integer budget = nullSafeInteger(row.getAs("max_budget"));
 
-        String eIdList = row.getAs("enquiryIds");
-        Integer additionalEnquiryCount = eIdList != null ? eIdList.split(",").length - 1 : 0;
-
         Integer statusId = nullSafeInteger(row.getAs("status_id"));
 
         String rsmIds = row.getAs("rsmIds");
@@ -46,7 +45,6 @@ public class LeadDataFactory {
         leadData.setTimeFrameId(timeFrameId);
         leadData.setIsStar(isStar);
         leadData.setBudget(budget);
-        leadData.setAdditionalEnquiryCount(additionalEnquiryCount);
         leadData.setStatusId(statusId);
         leadData.setClosed(statusId.equals(9) || statusId.equals(32) || statusId.equals(39));
         leadData.setCountryId(countryId);
@@ -54,8 +52,24 @@ public class LeadDataFactory {
         setProjectLevelEnquiryCount(leadData, row.getAs("enquiry_projects"));
         populateDataFromLeadHistory(leadData, rsmIds, rsmMap);
         setBedrooms(leadData, bedrooms);
+        setAdditionalEnquiryCount(leadData, row.getAs("enquiryIds"));
 
         return leadData;
+    }
+
+    private static void setAdditionalEnquiryCount(LeadData leadData, String enquiryIds) {
+        if (enquiryIds == null || enquiryIds.trim().isEmpty()) {
+            leadData.setAdditionalEnquiryCount(0);
+            return;
+        }
+        String[] arr = enquiryIds.split(",");
+        Set<Integer> enquiryIdSet = new HashSet<>();
+        for (String enquiryIdString : arr) {
+            Integer enquiryId = Integer.valueOf(enquiryIdString);
+            enquiryIdSet.add(enquiryId);
+        }
+        leadData.setAdditionalEnquiryCount(enquiryIdSet.size());
+
     }
 
     private static Integer nullSafeInteger(Integer integer) {
@@ -114,9 +128,12 @@ public class LeadDataFactory {
         }
         Set<Integer> commentIdSet = new HashSet<>();
         String[] rmsIdArray = rsmIds.split(",");
+        Set<String> rsmSet = new HashSet<>();
+        rsmSet.addAll(Arrays.asList(rmsIdArray));
+
         int countPresalesComment = 0;
 
-        for (String rsmString : rmsIdArray) {
+        for (String rsmString : rsmSet) {
             ReasonStatusMappingModel model = rsmMap.get(Integer.valueOf(rsmString));
             if (model == null) {
                 System.out.println("No rsm found for id " + Integer.valueOf(rsmString));
