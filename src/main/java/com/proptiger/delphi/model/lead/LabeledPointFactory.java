@@ -17,12 +17,14 @@ public class LabeledPointFactory {
                 leadData.getUploadTypeId(),
                 leadData.getCountryId() == 1 ? 0 : 1,
                 Boolean.TRUE.equals(leadData.getConfCallVerified()) ? 0 : 1,
-                Math.sqrt(leadData.getBudget()),
-                // leadData.getAdditionalEnquiryCount(),
+                leadData.getBudget(),
+                leadData.getAdditionalEnquiryCount(),
                 Math.sqrt(leadData.getBedrooms()),
                 leadData.getEnquiryLevelProjectCount(),
                 leadData.getNumCallAtPresales(),
-                Math.log(leadData.getLeadId())));
+                // Math.random(),
+                // Math.random(),
+                Math.random()));
 
         return pos;
 
