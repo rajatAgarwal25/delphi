@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration debug="true">
+
+	<property name="defaultPattern"
+		value="[%d{dd/MMM/yyyy:HH:mm:ss' 'Z} %thread %-5level %C:%L %X{X-Correlation-Id}] %msg%n" />
+	<appender name="delphi"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/var/log/proptiger/delphi/delphi.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<fileNamePattern>/var/log/proptiger/delphi/delphi-%d{yyyy-MM-dd}.log.gz
+			</fileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>debug</level>
+		</filter>
+		<append>true</append>
+		<encoder>
+			<pattern>${defaultPattern}</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="delphiApi"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/var/log/proptiger/delphi/delphiApi.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<fileNamePattern>/var/log/proptiger/delphi/delphiApi-%d{yyyy-MM-dd}.log.gz
+			</fileNamePattern>
+			<!-- keep 15 days' worth of history -->
+			<maxHistory>15</maxHistory>
+		</rollingPolicy>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>trace</level>
+		</filter>
+		<append>true</append>
+		<encoder>
+			<pattern>${defaultPattern}</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${defaultPattern}</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.springframework.data.mongodb.core.MongoTemplate">
+		<level value="DEBUG" />
+	</logger>
+	<logger name="org">
+		<level value="ERROR" />
+	</logger>
+	<logger name="com.mchange.v2">
+		<level value="INFO" />
+	</logger>
+	<logger name="com">
+		<level value="INFO" />
+	</logger>
+	<logger name="springfox">
+		<level value="ERROR" />
+	</logger>
+	<logger name="com.proptiger.delphi.filter">
+		<level value="trace" />
+		<appender-ref ref="delphiApi" />
+	</logger>
+
+	<root level="debug">
+		<appender-ref ref="delphi" />
+	</root>
+</configuration>
